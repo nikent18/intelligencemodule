@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.inetelligencemodule.models.Employee;
 import com.inetelligencemodule.dao.InterfaceDataDao;
 import com.inetelligencemodule.models.AbstractStageModel;
+import com.inetelligencemodule.models.LoanApprovalStage;
 
 public class DataServicesImpl implements InterfaceDataServices {
 
@@ -15,6 +16,11 @@ public class DataServicesImpl implements InterfaceDataServices {
         
         public AbstractStageModel getEntityById(long id) throws Exception {
 		return dataDao.getEntityById(id);
+	}
+        
+        @Override
+	public List<LoanApprovalStage> getEntityList() throws Exception {
+		return dataDao.getEntityList();
 	}
         
 	/*

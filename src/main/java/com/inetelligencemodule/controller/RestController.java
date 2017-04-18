@@ -43,6 +43,18 @@ public class RestController {
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     public @ResponseBody
     String test() {
+        
+ 
+        List<LoanApprovalStage> stageList = null;
+        try {
+            stageList = dataServices.getEntityList();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+  //      return stageList;
+        
         ClassifierAccurancy ca = new ClassifierAccurancy();
         try {
             ca.process();

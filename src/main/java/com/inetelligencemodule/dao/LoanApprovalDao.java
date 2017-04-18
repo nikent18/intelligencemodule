@@ -33,6 +33,17 @@ public class LoanApprovalDao implements InterfaceDataDao {
 		return stage;
 	}
         
+        @SuppressWarnings("unchecked")
+	@Override
+	public List<LoanApprovalStage> getEntityList() throws Exception {
+		session = sessionFactory.openSession();
+		tx = session.beginTransaction();
+		List<LoanApprovalStage> loanApprovalList = session.createCriteria(LoanApprovalStage.class)
+				.list();
+		tx.commit();
+		session.close();
+		return loanApprovalList;
+	}
 /*
 	@Override
 	public boolean addEntity(Employee employee) throws Exception {

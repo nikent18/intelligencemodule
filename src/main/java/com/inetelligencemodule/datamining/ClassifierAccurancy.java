@@ -5,11 +5,16 @@
  */
 package com.inetelligencemodule.datamining;
 
+import com.inetelligencemodule.models.LoanApprovalStage;
+import com.inetelligencemodule.services.DataServicesImpl;
+import com.inetelligencemodule.services.InterfaceDataServices;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
@@ -121,6 +126,16 @@ public class ClassifierAccurancy {
             }*/
 
         }
-
+        tests();
     }
+    @Autowired
+    InterfaceDataServices dataServices;
+    public void tests () {
+    /*    List<LoanApprovalStage> records = dataServices.getAllRecords();
+    //    List<LoanApprovalStage> records = tmp.getAllRecords();
+        for (LoanApprovalStage stage : records) {
+            System.out.println(123);
+        }*/
+    }
+    
 }
