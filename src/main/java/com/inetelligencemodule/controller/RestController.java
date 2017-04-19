@@ -63,6 +63,30 @@ public class RestController {
         }
         return "wqeqw";
     }
+ 
+    @RequestMapping(value = "/addLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String addLoanApproval(@RequestBody LoanApprovalStage stage) {
+        try {
+            dataServices.addEntity(stage);
+            return "ok";
+        } catch (Exception e) {
+            // e.printStackTrace();
+            return e.getMessage();
+        }
+    }
+    
+    @RequestMapping(value = "/updateLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String updateLoanApproval(@RequestBody LoanApprovalStage stage) {
+        try {
+            dataServices.updateEntity(stage);
+            return "ok";
+        } catch (Exception e) {
+            // e.printStackTrace();
+            return e.getMessage();
+        }
+    }
 
     /*
     @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

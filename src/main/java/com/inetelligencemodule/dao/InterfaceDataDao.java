@@ -10,6 +10,8 @@ public interface InterfaceDataDao {
 
     public AbstractStageModel getEntityById(long id) throws Exception;
     public List<LoanApprovalStage> getEntityList() throws Exception;
+    public boolean addEntity(AbstractStageModel stageModel) throws Exception;
+    public boolean updateEntity(AbstractStageModel stageModel) throws Exception;
     /*
 	public boolean addEntity(Employee employee) throws Exception;
 	public Employee getEntityById(long id) throws Exception;

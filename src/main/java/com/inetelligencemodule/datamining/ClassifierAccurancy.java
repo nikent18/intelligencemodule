@@ -128,14 +128,14 @@ public class ClassifierAccurancy {
         }
         tests();
     }
-    @Autowired
-    InterfaceDataServices dataServices;
+
+    
     public void tests () {
-    /*    List<LoanApprovalStage> records = dataServices.getAllRecords();
-    //    List<LoanApprovalStage> records = tmp.getAllRecords();
-        for (LoanApprovalStage stage : records) {
-            System.out.println(123);
-        }*/
+
+    }
+    
+    public void trainModel() {
+        
     }
     
 }

@@ -15,9 +15,11 @@ import javax.persistence.Id;
  *
  * @author nikita
  */
-public class AbstractStageModel implements Serializable {
+public abstract class AbstractStageModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-
+    public abstract long getId();
+    public abstract void setStageClass(String stageClass);
+    public abstract String getStageClass();
+    public abstract long getStageId();
 }

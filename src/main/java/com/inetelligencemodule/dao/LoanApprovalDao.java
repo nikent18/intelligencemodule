@@ -10,41 +10,76 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.inetelligencemodule.models.Employee;
 import com.inetelligencemodule.models.LoanApprovalStage;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.Transformers;
 
-@JsonIgnoreProperties(ignoreUnknown=true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class LoanApprovalDao implements InterfaceDataDao {
 
-	@Autowired
-	SessionFactory sessionFactory;
+    @Autowired
+    SessionFactory sessionFactory;
 
-	Session session = null;
-	Transaction tx = null;
-        
-        @Override
-	public AbstractStageModel getEntityById(long id) throws Exception {
-		session = sessionFactory.openSession();
-		LoanApprovalStage stage = (LoanApprovalStage) session.load(LoanApprovalStage.class,
-				new Long(id));
-		tx = session.getTransaction();
-               
+    Session session = null;
+    Transaction tx = null;
+
+    @Override
+    public AbstractStageModel getEntityById(long id) throws Exception {
+        session = sessionFactory.openSession();
+        Criteria criteria = session.createCriteria(LoanApprovalStage.class);
                 
-		session.beginTransaction();
-		tx.commit();
-		return stage;
-	}
+        AbstractStageModel stage = (LoanApprovalStage)criteria
+                .add(Restrictions.eq("stageId", id)).uniqueResult();
+        tx = session.getTransaction();
+
+        session.beginTransaction();
+        tx.commit();
+        return stage;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<LoanApprovalStage> getEntityList() throws Exception {
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
+        List<LoanApprovalStage> loanApprovalList = session.createCriteria(LoanApprovalStage.class)
+                .list();
+        tx.commit();
+        session.close();
+        return loanApprovalList;
+    }
+
+    @Override
+    public boolean addEntity(AbstractStageModel stageModel) throws Exception {
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
+        session.save(stageModel);
+        tx.commit();
+        session.close();
+        return true;
+    }
+
+    @Override
+    public boolean updateEntity(AbstractStageModel stageModel) throws Exception {
+        long stageId = stageModel.getStageId();
+        String stageClass = stageModel.getStageClass();
         
-        @SuppressWarnings("unchecked")
-	@Override
-	public List<LoanApprovalStage> getEntityList() throws Exception {
-		session = sessionFactory.openSession();
-		tx = session.beginTransaction();
-		List<LoanApprovalStage> loanApprovalList = session.createCriteria(LoanApprovalStage.class)
-				.list();
-		tx.commit();
-		session.close();
-		return loanApprovalList;
-	}
-/*
+        
+        session = sessionFactory.openSession();
+        tx = session.beginTransaction();
+        Criteria criteria = session.createCriteria(LoanApprovalStage.class);
+                
+        AbstractStageModel existingStageModel = (LoanApprovalStage)criteria
+                .add(Restrictions.eq("stageId", stageId)).uniqueResult();
+        existingStageModel.setStageClass(stageClass);
+        session.update(existingStageModel);
+        tx.commit();
+        session.close();
+        return true;
+    }
+
+    /*
 	@Override
 	public boolean addEntity(Employee employee) throws Exception {
 
@@ -93,5 +128,5 @@ public class LoanApprovalDao implements InterfaceDataDao {
 		tx.commit();
 		return false;
 	}
-*/
+     */
 }

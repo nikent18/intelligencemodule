@@ -16,7 +16,11 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 @Table(name = "loan_approval_stage")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LoanApprovalStage extends AbstractStageModel {
-
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    protected long id;
+    
     @Column(name = "sepallength")
     private double sepallength;
 
@@ -29,13 +33,11 @@ public class LoanApprovalStage extends AbstractStageModel {
     @Column(name = "petalwidth")
     private double petalwidth;
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
-    protected long id;
-
-    @Column(name = "class")
+    @Column(name = "stage_class")
     protected String stageClass;
+    
+    @Column(name = "approval_id")
+    protected long stageId;
 
     public long getId() {
         return id;
@@ -83,6 +85,14 @@ public class LoanApprovalStage extends AbstractStageModel {
 
     public double getPetalwidth() {
         return petalwidth;
+    }
+    
+    public void setStageId(int approvalId) {
+        this.stageId = approvalId;
+    }
+
+    public long getStageId() {
+        return stageId;
     }
 
 }

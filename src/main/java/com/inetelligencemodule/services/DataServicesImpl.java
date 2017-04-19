@@ -11,19 +11,28 @@ import com.inetelligencemodule.models.LoanApprovalStage;
 
 public class DataServicesImpl implements InterfaceDataServices {
 
-	@Autowired
-	InterfaceDataDao dataDao;
-        
-        public AbstractStageModel getEntityById(long id) throws Exception {
-		return dataDao.getEntityById(id);
-	}
-        
-        @Override
-	public List<LoanApprovalStage> getEntityList() throws Exception {
-		return dataDao.getEntityList();
-	}
-        
-	/*
+    @Autowired
+    InterfaceDataDao dataDao;
+
+    public AbstractStageModel getEntityById(long id) throws Exception {
+        return dataDao.getEntityById(id);
+    }
+
+    @Override
+    public List<LoanApprovalStage> getEntityList() throws Exception {
+        return dataDao.getEntityList();
+    }
+
+    @Override
+    public boolean addEntity(AbstractStageModel stageModel) throws Exception {
+        return dataDao.addEntity(stageModel);
+    }
+
+    @Override
+    public boolean updateEntity(AbstractStageModel stageModel) throws Exception {
+        return dataDao.updateEntity(stageModel);
+    }
+    /*
 	@Override
 	public boolean addEntity(Employee employee) throws Exception {
 		return dataDao.addEntity(employee);
