@@ -19,7 +19,7 @@ public class DataServicesImpl implements InterfaceDataServices {
     }
 
     @Override
-    public List<LoanApprovalStage> getEntityList() throws Exception {
+    public List<AbstractStageModel> getEntityList() throws Exception {
         return dataDao.getEntityList();
     }
 

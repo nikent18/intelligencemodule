@@ -1,6 +1,8 @@
 package com.inetelligencemodule.controller;
 
 import com.inetelligencemodule.datamining.ClassifierAccurancy;
+import com.inetelligencemodule.datamining.Trainer;
+import com.inetelligencemodule.models.AbstractStageModel;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -45,14 +47,14 @@ public class RestController {
     String test() {
         
  
-        List<LoanApprovalStage> stageList = null;
+      /*  List<LoanApprovalStage> stageList = null;
         try {
             stageList = dataServices.getEntityList();
-
+            System.out.println(stageList.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+*/
   //      return stageList;
         
         ClassifierAccurancy ca = new ClassifierAccurancy();
@@ -86,6 +88,34 @@ public class RestController {
             // e.printStackTrace();
             return e.getMessage();
         }
+    }
+    
+    @RequestMapping(value = "/trainModel/{stageName}", method = RequestMethod.GET)
+    public @ResponseBody
+    String trainModel(@PathVariable("stageName") String stageName) {
+        
+ 
+        List<AbstractStageModel> stageList = null;
+        
+        try {
+            stageList = dataServices.getEntityList();
+            Trainer trainer = new Trainer(stageList);
+            trainer.train();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+            return e.getMessage();
+        }
+
+  //      return stageList;
+        
+    /*    ClassifierAccurancy ca = new ClassifierAccurancy();
+        try {
+            ca.process();
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
+        }*/
+        return "wqeqw";
     }
 
     /*

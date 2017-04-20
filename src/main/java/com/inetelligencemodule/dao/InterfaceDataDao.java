@@ -9,7 +9,7 @@ import com.inetelligencemodule.models.LoanApprovalStage;
 public interface InterfaceDataDao {
 
     public AbstractStageModel getEntityById(long id) throws Exception;
-    public List<LoanApprovalStage> getEntityList() throws Exception;
+    public List<AbstractStageModel> getEntityList() throws Exception;
     public boolean addEntity(AbstractStageModel stageModel) throws Exception;
     public boolean updateEntity(AbstractStageModel stageModel) throws Exception;
     /*

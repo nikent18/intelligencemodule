@@ -6,10 +6,15 @@
 package com.inetelligencemodule.models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import weka.core.Attribute;
+import weka.core.Instance;
 
 /**
  *
@@ -22,4 +27,7 @@ public abstract class AbstractStageModel implements Serializable {
     public abstract void setStageClass(String stageClass);
     public abstract String getStageClass();
     public abstract long getStageId();
+    public abstract Instance getWekaInstance();
+    protected abstract Map<String, Attribute> getAttributes();
+    public abstract ArrayList<Attribute> getWekaAttrsList();
 }

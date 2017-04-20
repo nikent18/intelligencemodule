@@ -40,10 +40,10 @@ public class LoanApprovalDao implements InterfaceDataDao {
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<LoanApprovalStage> getEntityList() throws Exception {
+    public List<AbstractStageModel> getEntityList() throws Exception {
         session = sessionFactory.openSession();
         tx = session.beginTransaction();
-        List<LoanApprovalStage> loanApprovalList = session.createCriteria(LoanApprovalStage.class)
+        List<AbstractStageModel> loanApprovalList = session.createCriteria(LoanApprovalStage.class)
                 .list();
         tx.commit();
         session.close();

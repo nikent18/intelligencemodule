@@ -5,12 +5,19 @@
  */
 package com.inetelligencemodule.models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import weka.core.Attribute;
+import weka.core.DenseInstance;
+import weka.core.Instance;
 
 @Entity
 @Table(name = "loan_approval_stage")
@@ -37,7 +44,7 @@ public class LoanApprovalStage extends AbstractStageModel {
     protected String stageClass;
     
     @Column(name = "approval_id")
-    protected long stageId;
+    protected Long stageId;
 
     public long getId() {
         return id;
@@ -87,12 +94,43 @@ public class LoanApprovalStage extends AbstractStageModel {
         return petalwidth;
     }
     
-    public void setStageId(int approvalId) {
+    public void setStageId(Long approvalId) {
         this.stageId = approvalId;
     }
 
     public long getStageId() {
         return stageId;
     }
+    
+    public Instance getWekaInstance() {
+        Map<String, Attribute> attrs = getAttributes();
+        Instance inst = new DenseInstance(attrs.size());
+        inst.setValue(attrs.get("sepallength"), this.sepallength);
+        inst.setValue(attrs.get("sepalwidth"), this.sepalwidth);
+        inst.setValue(attrs.get("petallength"), this.petallength);
+        inst.setValue(attrs.get("petalwidth"), this.petalwidth);
+        inst.setValue(attrs.get("stageClass"), this.stageClass);
+        return inst;
+    }
+    
+    public ArrayList<Attribute> getWekaAttrsList() {
+        return new ArrayList<>(getAttributes().values());
+    }
+    
+    protected Map<String, Attribute> getAttributes() {
+        Map<String, Attribute> attrs = new HashMap<>();
+        attrs.put("sepallength", new Attribute("sepallength", 0));
+        attrs.put("sepalwidth", new Attribute("sepalwidth", 1));
+        attrs.put("petallength", new Attribute("petallength", 2));
+        attrs.put("petalwidth", new Attribute("petalwidth", 3));
+        ArrayList<String> classValues = new ArrayList<>();
+        classValues.add("setosa");
+        classValues.add("versicolor");
+        classValues.add("virginica");
+        attrs.put("stageClass", new Attribute("stageClass", classValues, 4));
+        return attrs;
+    }
+    
+    
 
 }
