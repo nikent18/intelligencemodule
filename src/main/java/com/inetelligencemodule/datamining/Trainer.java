@@ -5,20 +5,35 @@
  */
 package com.inetelligencemodule.datamining;
 
+import com.inetelligencemodule.filesworking.ClassifierModelFiles;
 import com.inetelligencemodule.models.AbstractStageModel;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
+import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.evaluation.NominalPrediction;
 import weka.classifiers.evaluation.NumericPrediction;
 import weka.classifiers.evaluation.Prediction;
 import weka.classifiers.functions.MultilayerPerceptron;
+import weka.classifiers.trees.J48;
+import weka.classifiers.trees.RandomForest;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.FastVector;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.converters.ArffLoader;
 
 /**
  *
@@ -28,51 +43,42 @@ public class Trainer {
 
     private List<AbstractStageModel> trainingDataset;
 
+
     public Trainer(List<AbstractStageModel> stageModels) {
         trainingDataset = stageModels;
     }
 
-    public void train() throws Exception {
-        //ArrayList<Instance> modelsInstances = new ArrayList<>();
-        Instances instances = new Instances("name", trainingDataset.get(0).getWekaAttrsList(), trainingDataset.size());
+    public void train(String stageName) throws Exception {
+        Instances trainingData = new Instances("name", trainingDataset.get(0).getWekaAttrsList(), 0);
         for (AbstractStageModel stage : trainingDataset) {
-            instances.add(stage.getWekaInstance());
+            trainingData.add(stage.getWekaInstance());
         }
-        instances.setClassIndex(instances.numAttributes() - 1);
+        trainingData.setClassIndex(trainingData.numAttributes() - 1);
         Classifier classifier = new MultilayerPerceptron();
-        //classifier.buildClassifier(instances);
+        classifier.buildClassifier(trainingData);
+        ClassifierModelFiles.saveClassifierModel(classifier, stageName);
+        /*  Instance testInstance = new DenseInstance(trainingDataset.get(0).getWekaAttrsList().size());
+        testInstance.setValue(new Attribute("sepallength", 0), 7.7);
+        testInstance.setValue(new Attribute("sepalwidth", 1), 0.94);
+        testInstance.setValue(new Attribute("petallength", 2), 2.60);
+        testInstance.setValue(new Attribute("petalwidth", 3), 0.25);    
+        classifier.classifyInstance(testInstance);
+        double prediction = classifier.classifyInstance(testInstance);
 
-        // Do 10-split cross validation
-        Instances[][] split = crossValidationSplit(instances, 50);
-
-        // Separate split into training and testing arrays
-        Instances[] trainingSplits = split[0];
-        Instances[] testingSplits = split[1];
-         ArrayList<Prediction> predictions = new ArrayList<>();
-        for (int i = 0; i < trainingSplits.length; i++) {
-           
-            classifier.buildClassifier(trainingSplits[i]);
-            Evaluation evaluation = new Evaluation(trainingSplits[i]);
-            evaluation.evaluateModel(classifier, testingSplits[i]);
-            // Evaluation validation = classify(classifier, trainingSplits[i], testingSplits[i]);
-            predictions.addAll(evaluation.predictions());
-
-        }
-        for (Prediction pr : predictions) {
-            System.out.println("PRED " + pr.predicted());
-            System.out.println("ACT " + pr.actual());
-        }
-
+        double distribution[] =classifier.distributionForInstance(testInstance);
+       System.out.println("---------------------------------------------");
+        System.out.println(prediction);
+       double max = distribution[0];
+       int j =0;
+       for (int i = 0; i < distribution.length; i++) {
+           //  System.out.println(distribution[i]);
+           if (distribution[i] > max) {
+               max = distribution[i];
+               j = i;
+           }
+       }     */
     }
 
-    public static Instances[][] crossValidationSplit(Instances data, int numberOfFolds) {
-        Instances[][] split = new Instances[2][numberOfFolds];
+    
 
-        for (int i = 0; i < numberOfFolds; i++) {
-            split[0][i] = data.trainCV(numberOfFolds, i);
-            split[1][i] = data.testCV(numberOfFolds, i);
-        }
-
-        return split;
-    }
 }

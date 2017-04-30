@@ -45,7 +45,7 @@ public class LoanApprovalStage extends AbstractStageModel {
     
     @Column(name = "approval_id")
     protected Long stageId;
-
+    
     public long getId() {
         return id;
     }
@@ -109,12 +109,21 @@ public class LoanApprovalStage extends AbstractStageModel {
         inst.setValue(attrs.get("sepalwidth"), this.sepalwidth);
         inst.setValue(attrs.get("petallength"), this.petallength);
         inst.setValue(attrs.get("petalwidth"), this.petalwidth);
-        inst.setValue(attrs.get("stageClass"), this.stageClass);
+        if (this.stageClass != null && this.stageClass != "") {
+            inst.setValue(attrs.get("stageClass"), (this.stageClass));
+        }
         return inst;
     }
     
     public ArrayList<Attribute> getWekaAttrsList() {
-        return new ArrayList<>(getAttributes().values());
+        String[] attributesList = {"sepallength", "sepalwidth", "petallength", 
+                                        "petalwidth", "stageClass"};
+        ArrayList attrs = new ArrayList<>();
+        Map attrsInfo = getAttributes();
+        for (int i=0; i< attributesList.length; i++) {
+            attrs.add(attrsInfo.get(attributesList[i]));
+        }
+        return attrs;
     }
     
     protected Map<String, Attribute> getAttributes() {
@@ -123,7 +132,7 @@ public class LoanApprovalStage extends AbstractStageModel {
         attrs.put("sepalwidth", new Attribute("sepalwidth", 1));
         attrs.put("petallength", new Attribute("petallength", 2));
         attrs.put("petalwidth", new Attribute("petalwidth", 3));
-        ArrayList<String> classValues = new ArrayList<>();
+        List classValues = new ArrayList(3); 
         classValues.add("setosa");
         classValues.add("versicolor");
         classValues.add("virginica");
@@ -131,6 +140,11 @@ public class LoanApprovalStage extends AbstractStageModel {
         return attrs;
     }
     
-    
-
+    public ArrayList<String> getClassValues() {
+        ArrayList classValues = new ArrayList(3); 
+        classValues.add("setosa");
+        classValues.add("versicolor");
+        classValues.add("virginica");
+        return  classValues;
+    }    
 }

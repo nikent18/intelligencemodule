@@ -30,4 +30,5 @@ public abstract class AbstractStageModel implements Serializable {
     public abstract Instance getWekaInstance();
     protected abstract Map<String, Attribute> getAttributes();
     public abstract ArrayList<Attribute> getWekaAttrsList();
+    public abstract ArrayList<String> getClassValues();
 }

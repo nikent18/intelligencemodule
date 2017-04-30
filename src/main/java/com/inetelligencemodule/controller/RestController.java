@@ -1,5 +1,6 @@
 package com.inetelligencemodule.controller;
 
+import com.inetelligencemodule.datamining.Classification;
 import com.inetelligencemodule.datamining.ClassifierAccurancy;
 import com.inetelligencemodule.datamining.Trainer;
 import com.inetelligencemodule.models.AbstractStageModel;
@@ -92,32 +93,32 @@ public class RestController {
     
     @RequestMapping(value = "/trainModel/{stageName}", method = RequestMethod.GET)
     public @ResponseBody
-    String trainModel(@PathVariable("stageName") String stageName) {
-        
- 
+    String trainModel(@PathVariable("stageName") String stageName) {       
         List<AbstractStageModel> stageList = null;
         
         try {
             stageList = dataServices.getEntityList();
             Trainer trainer = new Trainer(stageList);
-            trainer.train();
+            trainer.train(stageName);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
             return e.getMessage();
         }
-
-  //      return stageList;
-        
-    /*    ClassifierAccurancy ca = new ClassifierAccurancy();
-        try {
-            ca.process();
-        } catch (Exception ex) {
-            java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        return "wqeqw";
+        return "done";
     }
 
+    @RequestMapping(value = "/classifyLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String classifyLoanApproval(@RequestBody LoanApprovalStage stage) {
+        try {
+            Classification cl = new Classification();
+            return cl.classify(stage, "loanApproval");
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+    
     /*
     @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
