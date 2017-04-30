@@ -20,7 +20,7 @@ import weka.core.DenseInstance;
 import weka.core.Instance;
 
 @Entity
-@Table(name = "loan_approval_stage")
+@Table(name = "demo_stage")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class LoanApprovalStage extends AbstractStageModel {
     @Id
@@ -28,22 +28,22 @@ public class LoanApprovalStage extends AbstractStageModel {
     @Column(name = "id")
     protected long id;
     
-    @Column(name = "sepallength")
-    private double sepallength;
+    @Column(name = "age")
+    private int age;
 
-    @Column(name = "sepalwidth")
-    private double sepalwidth;
+    @Column(name = "income")
+    private int income;
 
-    @Column(name = "petallength")
-    private double petallength;
+    @Column(name = "demand")
+    private int demand;
 
-    @Column(name = "petalwidth")
-    private double petalwidth;
+    @Column(name = "area")
+    private String area;
 
     @Column(name = "stage_class")
     protected String stageClass;
     
-    @Column(name = "approval_id")
+    @Column(name = "stage_id")
     protected Long stageId;
     
     public long getId() {
@@ -62,36 +62,36 @@ public class LoanApprovalStage extends AbstractStageModel {
         this.stageClass = stageClass;
     }
 
-    public void setSepallength(double sepallength) {
-        this.sepallength = sepallength;
+    public void setAge(int age) {
+        this.age = age;
     }
 
-    public void setSepalwidth(double sepalwidth) {
-        this.sepalwidth = sepalwidth;
+    public void setIncome(int income) {
+        this.income = income;
     }
 
-    public void setPetallength(double petallength) {
-        this.petallength = petallength;
+    public void setDemand(int demand) {
+        this.demand = demand;
     }
 
-    public void setPetalwidth(double petalwidth) {
-        this.petalwidth = petalwidth;
+    public void setArea(String area) {
+        this.area = area;
     }
 
-    public double getSepallength() {
-        return sepallength;
+    public int getAge() {
+        return age;
     }
 
-    public double getSepalwidth() {
-        return sepalwidth;
+    public int getIncome() {
+        return income;
     }
 
-    public double getPetallength() {
-        return petallength;
+    public int getDemand() {
+        return demand;
     }
 
-    public double getPetalwidth() {
-        return petalwidth;
+    public String getArea() {
+        return area;
     }
     
     public void setStageId(Long approvalId) {
@@ -105,10 +105,10 @@ public class LoanApprovalStage extends AbstractStageModel {
     public Instance getWekaInstance() {
         Map<String, Attribute> attrs = getAttributes();
         Instance inst = new DenseInstance(attrs.size());
-        inst.setValue(attrs.get("sepallength"), this.sepallength);
-        inst.setValue(attrs.get("sepalwidth"), this.sepalwidth);
-        inst.setValue(attrs.get("petallength"), this.petallength);
-        inst.setValue(attrs.get("petalwidth"), this.petalwidth);
+        inst.setValue(attrs.get("age"), this.age);
+        inst.setValue(attrs.get("income"), this.income);
+        inst.setValue(attrs.get("demand"), this.demand);
+        inst.setValue(attrs.get("area"), this.area);
         if (this.stageClass != null && this.stageClass != "") {
             inst.setValue(attrs.get("stageClass"), (this.stageClass));
         }
@@ -116,8 +116,8 @@ public class LoanApprovalStage extends AbstractStageModel {
     }
     
     public ArrayList<Attribute> getWekaAttrsList() {
-        String[] attributesList = {"sepallength", "sepalwidth", "petallength", 
-                                        "petalwidth", "stageClass"};
+        String[] attributesList = {"age", "income", "demand", 
+                                        "area", "stageClass"};
         ArrayList attrs = new ArrayList<>();
         Map attrsInfo = getAttributes();
         for (int i=0; i< attributesList.length; i++) {
@@ -128,23 +128,21 @@ public class LoanApprovalStage extends AbstractStageModel {
     
     protected Map<String, Attribute> getAttributes() {
         Map<String, Attribute> attrs = new HashMap<>();
-        attrs.put("sepallength", new Attribute("sepallength", 0));
-        attrs.put("sepalwidth", new Attribute("sepalwidth", 1));
-        attrs.put("petallength", new Attribute("petallength", 2));
-        attrs.put("petalwidth", new Attribute("petalwidth", 3));
+        attrs.put("age", new Attribute("age", 0));
+        attrs.put("income", new Attribute("income", 1));
+        attrs.put("demand", new Attribute("demand", 2));
+        attrs.put("area", new Attribute("area", 3));
         List classValues = new ArrayList(3); 
-        classValues.add("setosa");
-        classValues.add("versicolor");
-        classValues.add("virginica");
+        classValues.add("yes");
+        classValues.add("no");
         attrs.put("stageClass", new Attribute("stageClass", classValues, 4));
         return attrs;
     }
     
     public ArrayList<String> getClassValues() {
         ArrayList classValues = new ArrayList(3); 
-        classValues.add("setosa");
-        classValues.add("versicolor");
-        classValues.add("virginica");
+        classValues.add("yes");
+        classValues.add("no");
         return  classValues;
     }    
 }
