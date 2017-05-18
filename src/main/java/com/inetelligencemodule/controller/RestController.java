@@ -3,6 +3,7 @@ package com.inetelligencemodule.controller;
 import com.inetelligencemodule.database.DBConnector;
 import com.inetelligencemodule.datamining.Classification;
 import com.inetelligencemodule.datamining.ClassifierAccurancy;
+import com.inetelligencemodule.datamining.DeepLearningTrainer;
 import com.inetelligencemodule.datamining.Trainer;
 import com.inetelligencemodule.models.AbstractStageModel;
 import java.util.List;
@@ -22,6 +23,7 @@ import com.inetelligencemodule.models.Employee;
 import com.inetelligencemodule.models.LoanApprovalStage;
 import com.inetelligencemodule.services.InterfaceDataServices;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 @Controller
@@ -45,28 +47,17 @@ public class RestController {
         return stage.getStageClass();
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/qwetest/{tableName}", method = RequestMethod.GET)
     public @ResponseBody
-    String test() {
-        
- 
-      /*  List<LoanApprovalStage> stageList = null;
+    String test(@PathVariable("tableName") String tableName) {
+        DBConnector db = new DBConnector();
         try {
-            stageList = dataServices.getEntityList();
-            System.out.println(stageList.size());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-*/
-  //      return stageList;
-        
-        ClassifierAccurancy ca = new ClassifierAccurancy();
-        try {
-            ca.process();
+            List tmp = db.getTableData(tableName);
+            System.out.println(tmp.size());
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "wqeqw";
+        return "Testok";
     }
     
     @RequestMapping(value = "/addEntity/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -118,20 +109,11 @@ public class RestController {
         }
     }
     
-    @RequestMapping(value = "/trainModel/{stageName}", method = RequestMethod.GET)
+    @RequestMapping(value = "/trainModel/{tableName}", method = RequestMethod.GET)
     public @ResponseBody
-    String trainModel(@PathVariable("stageName") String stageName) {       
-        List<AbstractStageModel> stageList = null;
-        
-        try {
-            stageList = dataServices.getEntityList();
-            Trainer trainer = new Trainer(stageList);
-            trainer.train(stageName);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-            return e.getMessage();
-        }
+    String trainModel(@PathVariable("tableName") String tableName) {       
+        DeepLearningTrainer dlt = new DeepLearningTrainer();
+        dlt.trainModel(tableName);
         return "done";
     }
 

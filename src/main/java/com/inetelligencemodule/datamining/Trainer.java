@@ -40,11 +40,11 @@ import weka.core.converters.ArffLoader;
  *
  * @author nikita
  */
-public class Trainer {
+public abstract class Trainer {
 
     private List<AbstractStageModel> trainingDataset;
-
-
+    public abstract void trainModel(String tableName);
+/*
     public Trainer(List<AbstractStageModel> stageModels) {
         trainingDataset = stageModels;
     }
@@ -78,9 +78,9 @@ public class Trainer {
                max = distribution[i];
                j = i;
            }
-       }     */
+       }     
     }
-
+*/
     
 
 }

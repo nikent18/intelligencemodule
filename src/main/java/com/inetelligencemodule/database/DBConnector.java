@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.sql.*;
+import java.util.Collection;
 import java.util.TreeMap;
 /**
  * Simple Java program to connect to MySQL database running on localhost and
@@ -105,5 +106,26 @@ public class DBConnector {
         preparedStatement.setObject(1, classValue);
         preparedStatement.setObject(2, stageId);
         preparedStatement.execute();
+    }
+    
+    public List<HashMap<String,Object>> getTableData(String tableName) throws SQLException {
+        String query = "SELECT * FROM "+ tableName;
+        rs = stmt.executeQuery(query);
+        List<HashMap<String,Object>> data = new ArrayList<>();
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int columnCount = rsmd.getColumnCount();
+        
+        while (rs.next()) {
+            HashMap<String, Object> rowInfo = new HashMap<>();
+            for (int i = 1; i <= columnCount; i++) {
+                String columnName = rsmd.getColumnName(i);
+                if (columnName.equals("id") || columnName.equals("stage_class")) {
+                    continue;
+                }
+                rowInfo.put(columnName, rs.getObject(columnName));
+            }
+            data.add(rowInfo);
+        }
+        return data;
     }
 }
