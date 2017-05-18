@@ -7,6 +7,7 @@ package com.inetelligencemodule.datamining;
 
 import com.inetelligencemodule.filesworking.ClassifierModelFiles;
 import com.inetelligencemodule.models.AbstractStageModel;
+import com.inetelligencemodule.models.LoanApprovalStage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -49,6 +50,7 @@ public class Trainer {
     }
 
     public void train(String stageName) throws Exception {
+        LoanApprovalStage.setWekaAttributes(trainingDataset);
         Instances trainingData = new Instances("name", trainingDataset.get(0).getWekaAttrsList(), 0);
         for (AbstractStageModel stage : trainingDataset) {
             trainingData.add(stage.getWekaInstance());

@@ -1,5 +1,6 @@
 package com.inetelligencemodule.controller;
 
+import com.inetelligencemodule.database.DBConnector;
 import com.inetelligencemodule.datamining.Classification;
 import com.inetelligencemodule.datamining.ClassifierAccurancy;
 import com.inetelligencemodule.datamining.Trainer;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.inetelligencemodule.models.Employee;
 import com.inetelligencemodule.models.LoanApprovalStage;
 import com.inetelligencemodule.services.InterfaceDataServices;
+import java.io.IOException;
 import java.util.logging.Level;
 
 @Controller
@@ -66,11 +68,36 @@ public class RestController {
         }
         return "wqeqw";
     }
+    
+    @RequestMapping(value = "/addEntity/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String addEntity(@PathVariable("tableName") String tableName, @RequestBody String entity) {
+        DBConnector db = new DBConnector();
+        try {
+            db.insertEntity(tableName, entity);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "Testok";
+    }
+    
+    @RequestMapping(value = "/updateEntity/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String updateEntity(@PathVariable("tableName") String tableName, @RequestBody String entity) {
+        DBConnector db = new DBConnector();
+        try {
+            db.updateEntity(tableName, entity);
+        } catch (Exception ex) {
+            java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "Testok";
+    }
  
     @RequestMapping(value = "/addLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     String addLoanApproval(@RequestBody LoanApprovalStage stage) {
         try {
+            System.out.println(123);
             dataServices.addEntity(stage);
             return "ok";
         } catch (Exception e) {
@@ -112,8 +139,10 @@ public class RestController {
     public @ResponseBody
     String classifyLoanApproval(@RequestBody LoanApprovalStage stage) {
         try {
+            List<AbstractStageModel> stageList = dataServices.getEntityList();
+            LoanApprovalStage.setWekaAttributes(stageList);
             Classification cl = new Classification();
-            return cl.classify(stage, "loanApproval");
+            return cl.classify(stage, "dwqd");
         } catch (Exception e) {
             return e.getMessage();
         }

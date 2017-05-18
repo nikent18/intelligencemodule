@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -31,4 +32,6 @@ public abstract class AbstractStageModel implements Serializable {
     protected abstract Map<String, Attribute> getAttributes();
     public abstract ArrayList<Attribute> getWekaAttrsList();
     public abstract ArrayList<String> getClassValues();
+    public abstract String getArea();
+    
 }

@@ -7,6 +7,7 @@ package com.inetelligencemodule.models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
@@ -45,6 +46,8 @@ public class LoanApprovalStage extends AbstractStageModel {
     
     @Column(name = "stage_id")
     protected Long stageId;
+    
+    private static Map<String, Attribute> wekaAttributes;
     
     public long getId() {
         return id;
@@ -103,14 +106,14 @@ public class LoanApprovalStage extends AbstractStageModel {
     }
     
     public Instance getWekaInstance() {
-        Map<String, Attribute> attrs = getAttributes();
-        Instance inst = new DenseInstance(attrs.size());
-        inst.setValue(attrs.get("age"), this.age);
-        inst.setValue(attrs.get("income"), this.income);
-        inst.setValue(attrs.get("demand"), this.demand);
-        inst.setValue(attrs.get("area"), this.area);
+ //       Map<String, Attribute> attrs = getAttributes();
+        Instance inst = new DenseInstance(wekaAttributes.size());
+        inst.setValue(wekaAttributes.get("age"), this.age);
+        inst.setValue(wekaAttributes.get("income"), this.income);
+        inst.setValue(wekaAttributes.get("demand"), this.demand);
+        inst.setValue(wekaAttributes.get("area"), this.area);
         if (this.stageClass != null && this.stageClass != "") {
-            inst.setValue(attrs.get("stageClass"), (this.stageClass));
+            inst.setValue(wekaAttributes.get("stageClass"), (this.stageClass));
         }
         return inst;
     }
@@ -119,9 +122,9 @@ public class LoanApprovalStage extends AbstractStageModel {
         String[] attributesList = {"age", "income", "demand", 
                                         "area", "stageClass"};
         ArrayList attrs = new ArrayList<>();
-        Map attrsInfo = getAttributes();
+     //   Map attrsInfo = getAttributes();
         for (int i=0; i< attributesList.length; i++) {
-            attrs.add(attrsInfo.get(attributesList[i]));
+            attrs.add(wekaAttributes.get(attributesList[i]));
         }
         return attrs;
     }
@@ -131,7 +134,7 @@ public class LoanApprovalStage extends AbstractStageModel {
         attrs.put("age", new Attribute("age", 0));
         attrs.put("income", new Attribute("income", 1));
         attrs.put("demand", new Attribute("demand", 2));
-        attrs.put("area", new Attribute("area", 3));
+        attrs.put("area", new Attribute("area", (List<String>) null,3));
         List classValues = new ArrayList(3); 
         classValues.add("yes");
         classValues.add("no");
@@ -145,4 +148,20 @@ public class LoanApprovalStage extends AbstractStageModel {
         classValues.add("no");
         return  classValues;
     }    
+    
+    public static void setWekaAttributes(List<AbstractStageModel> models) {
+        wekaAttributes = new HashMap<>();
+        wekaAttributes.put("age", new Attribute("age", 0));
+        wekaAttributes.put("income", new Attribute("income", 1));
+        wekaAttributes.put("demand", new Attribute("demand", 2));
+        HashSet areaValues = new HashSet<>(); 
+        for (AbstractStageModel model : models) {
+            areaValues.add(model.getArea());
+        }
+        wekaAttributes.put("area", new Attribute("area",new ArrayList(areaValues),3));
+        List classValues = new ArrayList(3); 
+        classValues.add("yes");
+        classValues.add("no");
+        wekaAttributes.put("stageClass", new Attribute("stageClass", classValues, 4));
+    }
 }

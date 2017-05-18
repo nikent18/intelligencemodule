@@ -46,5 +46,5 @@
 	<bean id="dataDao" class="com.inetelligencemodule.dao.LoanApprovalDao"></bean>
 	<bean id="dataServices" class="com.inetelligencemodule.services.DataServicesImpl"></bean>
         
-
+      
 </beans>
