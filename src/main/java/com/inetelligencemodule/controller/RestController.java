@@ -3,6 +3,7 @@ package com.inetelligencemodule.controller;
 import com.inetelligencemodule.database.DBConnector;
 import com.inetelligencemodule.datamining.Classification;
 import com.inetelligencemodule.datamining.ClassifierAccurancy;
+import com.inetelligencemodule.datamining.DeepClassification;
 import com.inetelligencemodule.datamining.DeepLearningTrainer;
 import com.inetelligencemodule.datamining.Trainer;
 import com.inetelligencemodule.models.AbstractStageModel;
@@ -83,6 +84,18 @@ public class RestController {
         }
         return "Testok";
     }
+    
+    @RequestMapping(value = "/classifyMode/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody
+    String classifyEntity(@PathVariable("tableName") String tableName, @RequestBody String entity) {
+        try {
+            DeepClassification dc = new DeepClassification();
+            return dc.classify(tableName, entity);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+    }
+    
  
     @RequestMapping(value = "/addLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
@@ -116,7 +129,7 @@ public class RestController {
         dlt.trainModel(tableName);
         return "done";
     }
-
+/*
     @RequestMapping(value = "/classifyLoanApproval", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     String classifyLoanApproval(@RequestBody LoanApprovalStage stage) {
@@ -128,7 +141,7 @@ public class RestController {
         } catch (Exception e) {
             return e.getMessage();
         }
-    }
+    }*/
     
     /*
     @RequestMapping(value = "/create", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

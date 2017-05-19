@@ -119,7 +119,7 @@ public class DBConnector {
             HashMap<String, Object> rowInfo = new HashMap<>();
             for (int i = 1; i <= columnCount; i++) {
                 String columnName = rsmd.getColumnName(i);
-                if (columnName.equals("id") || columnName.equals("stage_class")) {
+                if (columnName.equals("id") || columnName.equals("task_id")) {
                     continue;
                 }
                 rowInfo.put(columnName, rs.getObject(columnName));
@@ -127,5 +127,12 @@ public class DBConnector {
             data.add(rowInfo);
         }
         return data;
+    }
+    
+    public ResultSetMetaData getTableMeta(String tableName) throws SQLException {
+        String query = "SELECT * FROM "+ tableName;
+        rs = stmt.executeQuery(query);
+        List<HashMap<String,Object>> data = new ArrayList<>();
+        return rs.getMetaData();      
     }
 }

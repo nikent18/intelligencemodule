@@ -27,6 +27,7 @@ import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.util.ModelSerializer;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -51,13 +52,13 @@ public class DeepLearningTrainer extends Trainer {
             RecordReader recordReader = new CSVRecordReader(0, ",");
             recordReader.initialize(new FileSplit(tmpFile));
             //Second: the RecordReaderDataSetIterator handles conversion to DataSet objects, ready for use in neural network
-            int labelIndex = 10;     //5 values in each row of the iris.txt CSV: 4 input features followed by an integer label (class) index. Labels are the 5th value (index 4) in each row
-            int numClasses = 6;     //3 classes (types of iris flowers) in the iris data set. Classes have integer values 0, 1 or 2
-            int batchSize = 25500;    //Iris data set: 150 examples total. We are loading all of them into one DataSet (not recommended for large data sets)
-            final int numInputs = 10;
+            int labelIndex = 4;     //5 values in each row of the iris.txt CSV: 4 input features followed by an integer label (class) index. Labels are the 5th value (index 4) in each row
+            int numClasses = 3;     //3 classes (types of iris flowers) in the iris data set. Classes have integer values 0, 1 or 2
+            int batchSize = 100;    //Iris data set: 150 examples total. We are loading all of them into one DataSet (not recommended for large data sets)
+            final int numInputs = 4;
             int numHiddenNodes = 30;
-            int outputNum = 6;
-            int iterations = 1000;
+            int outputNum = 3;
+            int iterations = 100;
             long seed = 123;
             int N = 0;
             System.out.println("Build model....");
@@ -96,40 +97,27 @@ public class DeepLearningTrainer extends Trainer {
             MultiLayerNetwork model = new MultiLayerNetwork(conf);
             model.init();
             model.setListeners(new ScoreIterationListener(100));
-            
-            
-            
+        
+        
+        
             DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, batchSize, labelIndex, numClasses);
-            DataSet allData = iterator.next();
-            DataSet trainingData = null;
-            DataSet testData = null;
-            double accuracy = 0;
-            //     for (int i=0; i < 10; i++) {
-            allData.shuffle();
-            SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.90); //Use 85% of data for training
-            trainingData = testAndTrain.getTrain();
-            testData = testAndTrain.getTest();
-            DataNormalization normalizer = new NormalizerStandardize();
-            normalizer.fit(trainingData);           //Collect the statistics (mean/stdev) from the training data. This does not modify the input data
-            normalizer.transform(trainingData);     //Apply normalization to the training data
-            normalizer.transform(testData);         //Apply normalization to the test data. This is using statistics calculated from the *training* set
-            model.fit(trainingData);
 
-            //evaluate the model on the test set
-            Evaluation eval = new Evaluation(outputNum);
-            INDArray output = model.output(testData.getFeatureMatrix());
-            eval.eval(testData.getLabels(), output);
-            System.out.println(output);
-            System.out.println(eval.stats());
-            accuracy+= eval.accuracy();
-            //     }
-            //      System.out.println(accuracy/10.0);
+            DataSet allData = iterator.next();
+            allData.shuffle();
+            //DataNormalization normalizer = new NormalizerStandardize();
+           // normalizer.fit(allData);           //Collect the statistics (mean/stdev) from the training data. This does not modify the input data
+            //normalizer.transform(allData);     //Apply normalization to the training data
+       
+            model.fit(allData);
+            File locationToSave = new File(Utils.getModelPath()+"_"+tableName);      //Where to save the network. Note: the file is in .zip format - can be opened externally
+            boolean saveUpdater = true;                                             //Updater: i.e., the state for Momentum, RMSProp, Adagrad etc. Save this if you want to train your network more in the future
+            ModelSerializer.writeModel(model, locationToSave, saveUpdater);                     
         } catch (IOException ex) {
             Logger.getLogger(DeepLearningTrainer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InterruptedException ex) {
             Logger.getLogger(DeepLearningTrainer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            //tmpFile.delete();
+            tmpFile.delete();
         }
     }
     

@@ -15,14 +15,14 @@ import weka.core.Instances;
  *
  * @author nikita
  */
-public class Classification {
-    
-    public String classify(AbstractStageModel toClassifyModel, String stageName) throws Exception {
+public abstract class Classification {
+    public abstract String classify(AbstractStageModel toClassifyModel);
+    /*public String classify(AbstractStageModel toClassifyModel, String stageName) throws Exception {
         Instance stageInstance = toClassifyModel.getWekaInstance();
         Classifier classifier = ClassifierModelFiles.getClassifier(stageName);
         Instances trainingData = new Instances("name", toClassifyModel.getWekaAttrsList(), 0);
         trainingData.setClassIndex(trainingData.numAttributes() - 1);
         stageInstance.setDataset(trainingData);
         return toClassifyModel.getClassValues().get((int)classifier.classifyInstance(stageInstance));
-    }
+    }*/
 }
