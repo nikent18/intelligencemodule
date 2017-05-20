@@ -12,7 +12,7 @@ import java.util.HashMap;
  * @author nikita
  */
 public class DatabaseConfigs {
-    private static String stageIdColumn = "stage_id";
+    private static String stageIdColumn = "task_id";
     public static String getStageIdColumnName() {
         return stageIdColumn;
     }

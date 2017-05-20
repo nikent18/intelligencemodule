@@ -6,6 +6,7 @@ import com.inetelligencemodule.datamining.ClassifierAccurancy;
 import com.inetelligencemodule.datamining.DeepClassification;
 import com.inetelligencemodule.datamining.DeepLearningTrainer;
 import com.inetelligencemodule.datamining.Trainer;
+import com.inetelligencemodule.datamining.WekaTrainer;
 import com.inetelligencemodule.models.AbstractStageModel;
 import java.util.List;
 
@@ -53,8 +54,8 @@ public class RestController {
     String test(@PathVariable("tableName") String tableName) {
         DBConnector db = new DBConnector();
         try {
-            List tmp = db.getTableData(tableName);
-            System.out.println(tmp.size());
+            WekaTrainer tr = new WekaTrainer(tableName);
+           tr.trainModel(tableName);
         } catch (Exception ex) {
             java.util.logging.Logger.getLogger(RestController.class.getName()).log(Level.SEVERE, null, ex);
         }

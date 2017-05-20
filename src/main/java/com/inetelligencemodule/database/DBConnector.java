@@ -64,7 +64,7 @@ public class DBConnector {
         ArrayList<String> questionMarks = new ArrayList<>();
         for(Map.Entry<String, String> entry : insertMap.entrySet()) {
             columnNames.add(entry.getKey().toString());
-            columnValues.add(String.valueOf(entry.getValue()));
+            columnValues.add(transformInput(entry.getValue(), tableName, entry.getKey()));
             questionMarks.add("?");
         }
         
@@ -87,24 +87,26 @@ public class DBConnector {
         String where = "";
         String setCol = "";
         Object stageId = null;
-        Object classValue = null;
         ArrayList<String> columnNames = new ArrayList<>();
         ArrayList<String> columnValues = new ArrayList<>();
         ArrayList<String> questionMarks = new ArrayList<>();
         for(Map.Entry<String, String> entry : insertMap.entrySet()) {
+            String value = transformInput(entry.getValue(), tableName, entry.getKey());
             if (entry.getKey() == DatabaseConfigs.getStageIdColumnName()) {
                 where = " WHERE " + DatabaseConfigs.getStageIdColumnName() +"=?";
                 stageId = entry.getValue();
             } else {
-                setCol = " SET " + entry.getKey() + "=?";
-                classValue = entry.getValue();
+                if (setCol.equals("")) {
+                    setCol = " SET " + entry.getKey() + "=" + value;
+                } else {
+                    setCol += " , " + entry.getKey() +"=" + value;
+                }
             }
         }
         query += setCol+where;
         PreparedStatement preparedStatement = null;
         preparedStatement = con.prepareStatement(query);
-        preparedStatement.setObject(1, classValue);
-        preparedStatement.setObject(2, stageId);
+        preparedStatement.setObject(1, stageId);
         preparedStatement.execute();
     }
     
@@ -134,5 +136,46 @@ public class DBConnector {
         rs = stmt.executeQuery(query);
         List<HashMap<String,Object>> data = new ArrayList<>();
         return rs.getMetaData();      
+    }
+    
+    public String transformInput (Object value, String tableName, String columnName) throws SQLException {
+        ResultSetMetaData rsmd = getTableMeta(tableName);
+        String returnValue = String.valueOf(value);
+        for (int i=1; i <= rsmd.getColumnCount(); i++) {
+                int columnType = rsmd.getColumnType(i);
+                String col = rsmd.getColumnName(i);
+                if (columnType == 12 && columnName.equals(col)) {
+                    returnValue = String.valueOf(getWordId(returnValue, tableName, columnName));
+                }                                       
+            }
+        return returnValue;
+    }
+    
+    private int getWordId(String word, String tableName, String columnName) throws SQLException {
+        String query = "SELECT word_id FROM " + getWord2TableName(tableName, columnName) + " WHERE word='"+word+"'";
+        rs = stmt.executeQuery(query);
+        if (!rs.next()) {
+            return addWord(word, tableName, columnName);
+        } else {
+            return rs.getInt("word_id");
+        }
+    }
+    
+    private int addWord (String word, String tableName, String columnName) throws SQLException {
+        String query = "SELECT max(word_id) as word_id FROM " + getWord2TableName(tableName, columnName);
+        rs = stmt.executeQuery(query);
+
+        int id = 0;
+        if (rs.next()) {
+            id = rs.getInt("word_id") + 1;           
+        }        
+        String insertQuery = "INSERT INTO " + getWord2TableName(tableName, columnName) +
+                    " VALUES (" + id + ", '" + word + "')";          
+            stmt.executeUpdate(insertQuery);
+        return id;
+    }
+    
+    private String getWord2TableName(String tableName, String columnName) {
+        return tableName + "_" + columnName;
     }
 }
