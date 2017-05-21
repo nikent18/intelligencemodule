@@ -86,7 +86,7 @@ public class RestController {
         return "Testok";
     }
     
-    @RequestMapping(value = "/classifyMode/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/classifyModel/{tableName}", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
     String classifyEntity(@PathVariable("tableName") String tableName, @RequestBody String entity) {
         try {

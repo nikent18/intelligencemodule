@@ -104,9 +104,9 @@ public class DeepLearningTrainer extends Trainer {
 
             DataSet allData = iterator.next();
             allData.shuffle();
-            //DataNormalization normalizer = new NormalizerStandardize();
-           // normalizer.fit(allData);           //Collect the statistics (mean/stdev) from the training data. This does not modify the input data
-            //normalizer.transform(allData);     //Apply normalization to the training data
+            DataNormalization normalizer = new NormalizerStandardize();
+            normalizer.fit(allData);           //Collect the statistics (mean/stdev) from the training data. This does not modify the input data
+            normalizer.transform(allData);     //Apply normalization to the training data
        
             model.fit(allData);
             File locationToSave = new File(Utils.getModelPath()+"_"+tableName);      //Where to save the network. Note: the file is in .zip format - can be opened externally
@@ -117,7 +117,7 @@ public class DeepLearningTrainer extends Trainer {
         } catch (InterruptedException ex) {
             Logger.getLogger(DeepLearningTrainer.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            tmpFile.delete();
+          //  tmpFile.delete();
         }
     }
     

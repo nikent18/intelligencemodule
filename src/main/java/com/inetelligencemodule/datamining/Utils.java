@@ -12,7 +12,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,21 +28,25 @@ import java.util.logging.Level;
  */
 public class Utils {
     
-    private static final String modelPath = "/home/nikita/NetBeansProjects/IntelligenceModule/files/ClassifierModels/deepModel.zip";
-    
+    private static final String modelPath = "/home/nikita/NetBeansProjects/IntelligenceModule/files/ClassifierModels/deepModel";
+    private static final String statisticPath = "/home/nikita/NetBeansProjects/IntelligenceModule/files/Statistic/deepStatistic";
     public static String getModelPath() {
         return modelPath;
+    }
+    
+    public static String getStatisticPath() {
+        return statisticPath;
     }
 
     public File prepareFileToTraining(String tableName) {
         DBConnector db = new DBConnector();
         BufferedWriter bw = null;
-        File tmpFile = new File("tmp_file");
+        File statisticFile = new File(statisticPath + "_" + tableName);
 
         try {
-            tmpFile.createNewFile();
+            statisticFile.createNewFile();
             ResultSetMetaData rsmd = db.getTableMeta(tableName);
-            bw = new BufferedWriter(new FileWriter(tmpFile, true));
+            bw = new BufferedWriter(new FileWriter(statisticFile, true));
             List<HashMap<String, Object>> tableData = db.getTableData(tableName);
             for (HashMap<String, Object> rowData : tableData) {
                 String[] strArr = new String[rsmd.getColumnCount() - 2];
@@ -68,10 +74,10 @@ public class Utils {
             }
         }
 
-        return tmpFile;
+        return statisticFile;
     }
     
-    public File prepareFileForClassify(String tableName, String jsonEntity) throws IOException {
+    public File prepareFileForClassify(String tableName, String jsonEntity) throws IOException, SQLException {
         DBConnector db = new DBConnector();       
         BufferedWriter bw = null;
         File tmpFile = new File("tmp_file_classify");
@@ -81,6 +87,7 @@ public class Utils {
         try {
             ResultSetMetaData rsmd = db.getTableMeta(tableName);
             tmpFile.createNewFile();
+            HashMap<String, Object> rawInfo = db.getRowById(tableName,getTaskId(insertMap));
             bw = new BufferedWriter(new FileWriter(tmpFile));
             int i;
             int k=0;
@@ -89,7 +96,7 @@ public class Utils {
                 String columnName = rsmd.getColumnName(i+1);
                     if (!columnName.equals("stage_class") && !columnName.equals("id")
                             && !columnName.equals("task_id")) {
-                        strArr[k++] = String.valueOf(insertMap.get(columnName));
+                        strArr[k++] = String.valueOf(rawInfo.get(columnName));
                     }                                       
             }
             strArr[k] = String.valueOf("0");
@@ -107,4 +114,13 @@ public class Utils {
         }
         return tmpFile;
     }    
+    private String getTaskId(HashMap<String,String> insertMap) {
+        String taskId = "";
+        for (Map.Entry<String, String> entry : insertMap.entrySet()) {
+            if (entry.getKey() == "task_id") {
+                taskId = String.valueOf(entry.getValue());
+            }
+        }
+        return taskId;
+    }
 }
